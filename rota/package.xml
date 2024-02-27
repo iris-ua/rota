@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<package>
+    <name>rota</name>
+    <version>2.0.0</version>
+    <description>
+        ROTA metapackage
+    </description>
+
+    <license>MIT</license>
+    <maintainer email="artur@ua.pt">Artur Pereira</maintainer>
+    <maintainer email="efp@ua.pt">Eurico Pedrosa</maintainer>
+
+    <author>The ROTA team</author>
+
+    <buildtool_depend>catkin</buildtool_depend>
+
+    <export>
+        <metapackage/>
+    </export>
+</package>
