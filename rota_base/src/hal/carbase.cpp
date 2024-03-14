@@ -1,12 +1,6 @@
 
 #include "rota_base/hal/carbase.h"
 
-struct C {
-    int id;
-    char a[2];
-
-};
-
 bool rota::CarBase::ignition()
 {
     // 1. Communications with the base
@@ -47,6 +41,5 @@ void rota::CarBase::drive()
         rate.sleep();
     }// end while
 
-    ros::spin();
     rx_thr.join();
 }
