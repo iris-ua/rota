@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package format="2">
+    <name>rota_base</name>
+    <version>2.0.0</version>
+    <description>The rota_base package</description>
+
+    <license>MIT</license>
+    <maintainer email="artur@ua.pt">Artur Pereira</maintainer>
+    <maintainer email="efp@ua.pt">Eurico Pedrosa</maintainer>
+
+    <author>The ROTA team</author>
+
+    <buildtool_depend>catkin</buildtool_depend>
+
+    <build_depend>roscpp</build_depend>
+    <build_depend>serial</build_depend>
+    <build_export_depend>roscpp</build_export_depend>
+    <build_export_depend>serial</build_export_depend>
+    <exec_depend>roscpp</exec_depend>
+    <exec_depend>serial</exec_depend>
+
+    <!-- The export tag contains other, unspecified, tags -->
+    <export>
+    </export>
+</package>
