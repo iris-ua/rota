@@ -6,4 +6,4 @@ set(carbase_SRC
 )
 
 add_executable(carbase ${carbase_SRC})
-target_link_libraries(carbase ${catkin_LIBRARIES})
+target_link_libraries(carbase rb_common ${catkin_LIBRARIES})

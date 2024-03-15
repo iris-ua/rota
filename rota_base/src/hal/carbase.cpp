@@ -9,7 +9,14 @@ bool rota::CarBase::ignition()
     bool ok = can.open("FTAK73XQ");
     if (not ok) return false;
 
-    // 2. Setup ROS publisher/subscribers/services
+    // 2. Setup the recurring can messages
+    motor_msg = {CANID_MOTOR,    6, {0,0,0,0,0,0,0,0}, true};
+    steer_msg = {CANID_STEERING, 3, {0,0,0,0,0,0,0,0}, true};
+    pntlt_msg = {CANID_PAN_TILT, 6, {0,0,0,0,0,0,0,0}, true};
+
+    priority_token = 0;
+
+    // 3. Setup ROS publisher/subscribers/services
     // node = ros::NodeHandle("~");
 
     return true;
@@ -30,13 +37,23 @@ void rota::CarBase::drive()
         }// end while
     });
 
-    ros::Rate rate(10);
+    ros::Rate rate(kTxRate);
     while ( ros::ok() ) {
 
-        // simple test to make sure it is working..
-        // set motor velocity to 0
-        CanMessage msg = { CANID_MOTOR, 6, {0,0,0,0,0,0,0,0}, true};
-        auto ok = can.write(msg);
+        msg_mutex.lock();
+        // The order of write matters.
+        // The goal is to receive the encoders and the steer feedback
+        // in this very same order.
+        can.write(motor_msg);
+        can.write(steer_msg);
+        can.write(pntlt_msg);
+
+        // Decrease the priority_token so the commands sent by an agent
+        // can eventually be used when there is no teleoperation.
+        if (priority_token)
+            priority_token -= 1;
+
+        msg_mutex.unlock();
 
         rate.sleep();
     }// end while
