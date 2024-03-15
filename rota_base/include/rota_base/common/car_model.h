@@ -27,14 +27,14 @@ struct CarModel {
 
     // encoding/decoding of data sent to, and received from the hardware gateway.
     // driving wheel
-    static double toDistanceFromPulses(uint16_t npulses);
-    static uint16_t toPulsesFromMotorVelocity(double vl);
+    static double toDistanceFromPulses(int16_t npulses);
+    static int16_t toPulsesFromMotorVelocity(double vl);
     // steering
-    static double toSteeringAngleFromSetpoint(uint16_t setpoint);
-    static double toCurvatureFromSetpoint(uint16_t setpoint);
+    static double toSteeringAngleFromSetpoint(int16_t setpoint);
+    static double toCurvatureFromSetpoint(int16_t setpoint);
     // pan & tilt
-    static std::pair<double, double> toPanTiltAnglesFromSetpoints(uint16_t pan, uint16_t tilt);
-    static std::pair<uint16_t, uint16_t> toPanTiltSetpointsFromAngles(double pan, double tilt);
+    static std::pair<double, double> toPanTiltAnglesFromSetpoints(int16_t pan, int16_t tilt);
+    static std::pair<int16_t, int16_t> toPanTiltSetpointsFromAngles(double pan, double tilt);
 
     // dead reckoning pose
     double x, y, theta;
