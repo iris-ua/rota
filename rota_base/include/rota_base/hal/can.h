@@ -33,6 +33,7 @@ struct CAN {
 
     bool read(CanMessage& msg);
     bool write(const CanMessage& msg);
+    bool writeAndInvalidateMsg(CanMessage& msg);
 
     ~CAN();
 };

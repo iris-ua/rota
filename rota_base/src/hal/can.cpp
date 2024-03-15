@@ -126,6 +126,9 @@ bool rota::CAN::read(CanMessage& msg)
 
 bool rota::CAN::write(const CanMessage& msg)
 {
+    // only write valid messages
+    if (not msg.valid) return false;
+
     int n;
     uint8_t buf[MSG_MAX_SZ];
 
@@ -162,6 +165,13 @@ bool rota::CAN::write(const CanMessage& msg)
     }
 
     return true;
+}
+
+bool rota::CAN::writeAndInvalidateMsg(CanMessage& msg)
+{
+    auto ret = write(msg);
+    msg.valid = false;
+    return ret;
 }
 
 

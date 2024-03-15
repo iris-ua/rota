@@ -41,12 +41,15 @@ void rota::CarBase::drive()
     while ( ros::ok() ) {
 
         msg_mutex.lock();
+
+        // Send the recurring messages to the base.
+        // The messages are only valid for one write.
+        //
         // The order of write matters.
-        // The goal is to receive the encoders and the steer feedback
-        // in this very same order.
-        can.write(motor_msg);
-        can.write(steer_msg);
-        can.write(pntlt_msg);
+        // The goal is to receive the encoders and the steer feedback in this very same order.
+        can.writeAndInvalidateMsg(motor_msg);
+        can.writeAndInvalidateMsg(steer_msg);
+        can.writeAndInvalidateMsg(pntlt_msg);
 
         // Decrease the priority_token so the commands sent by an agent
         // can eventually be used when there is no teleoperation.
