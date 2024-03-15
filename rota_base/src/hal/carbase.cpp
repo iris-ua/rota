@@ -32,8 +32,7 @@ void rota::CarBase::drive()
             bool ok = this->can.read(msg);
             if (!ok) continue;
 
-            // TODO: handle msg
-
+            handleFeedbackMessage(msg);
         }// end while
     });
 
@@ -62,4 +61,39 @@ void rota::CarBase::drive()
     }// end while
 
     rx_thr.join();
+}
+
+void rota::CarBase::handleFeedbackMessage(const CanMessage& msg)
+{
+    // only handle valid messages.
+    if (msg.valid == false) return;
+
+    switch(msg.id) {
+
+        case CANID_ENC: {
+            int16_t npulses = (int16_t)(msg.data[1] << 8 | msg.data[0]);
+            double distance = CarModel::toDistanceFromPulses(npulses);
+            //TODO:
+            break;
+        }// end case
+
+        case CANID_RD_STEERING: {
+            int16_t setpoint = (int16_t)(msg.data[1] << 8 | msg.data[0]);
+            double curvature = CarModel::toCurvatureFromSetpoint(setpoint);
+            double steer_ang = CarModel::toSteeringAngleFromSetpoint(setpoint);
+            //TODO:
+            break;
+        }// end case
+
+        case CANID_RD_PANTILT: {
+            int16_t pan_st = (int16_t)(msg.data[1] << 8 | msg.data[0]);
+            int16_t tlt_st = (int16_t)(msg.data[3] << 8 | msg.data[2]);
+            auto pt_angles = CarModel::toPanTiltAnglesFromSetpoints(pan_st, tlt_st);
+            //TODO:
+            break;
+        }// end case
+
+        default: break; // just ignore the message
+    }// end switch
+
 }

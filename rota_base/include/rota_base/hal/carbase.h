@@ -37,8 +37,16 @@ struct CarBase {
     // ROS stuff
     ros::NodeHandle node;
 
+    // This is the initialization function.
+    // It will open the CAN port and setup the necessary ROS pubs/subs.
     bool ignition();
+
+    // CarBase main loop.
+    // NOTE: This function should only be called after `ignition()`.
     void drive();
+
+    // Called by the data rx loop.
+    void handleFeedbackMessage(const CanMessage& msg);
 };
 
 }// namespace rota
