@@ -72,16 +72,17 @@ void rota::CarBase::handleFeedbackMessage(const CanMessage& msg)
 
         case CANID_ENC: {
             int16_t npulses = (int16_t)(msg.data[1] << 8 | msg.data[0]);
-            double distance = CarModel::toDistanceFromPulses(npulses);
-            //TODO:
+            model.dl = CarModel::toDistanceFromPulses(npulses);
             break;
         }// end case
 
         case CANID_RD_STEERING: {
             int16_t setpoint = (int16_t)(msg.data[1] << 8 | msg.data[0]);
-            double curvature = CarModel::toCurvatureFromSetpoint(setpoint);
             double steer_ang = CarModel::toSteeringAngleFromSetpoint(setpoint);
-            //TODO:
+            model.c = CarModel::toCurvatureFromSetpoint(setpoint);
+            model.updateDeadReckoning();
+
+            // TODO publish
             break;
         }// end case
 
@@ -89,7 +90,8 @@ void rota::CarBase::handleFeedbackMessage(const CanMessage& msg)
             int16_t pan_st = (int16_t)(msg.data[1] << 8 | msg.data[0]);
             int16_t tlt_st = (int16_t)(msg.data[3] << 8 | msg.data[2]);
             auto pt_angles = CarModel::toPanTiltAnglesFromSetpoints(pan_st, tlt_st);
-            //TODO:
+
+            // TODO publish
             break;
         }// end case
 

@@ -36,10 +36,15 @@ struct CarModel {
     static std::pair<double, double> toPanTiltAnglesFromSetpoints(int16_t pan, int16_t tilt);
     static std::pair<int16_t, int16_t> toPanTiltSetpointsFromAngles(double pan, double tilt);
 
+    CarModel();
+
+    // delta motion in terms of delta length (or delta distance) and curvature
+    double dl, c;
     // dead reckoning pose
     double x, y, theta;
 
-    CarModel();
+    void updateDeadReckoning();
+
 
 };
 

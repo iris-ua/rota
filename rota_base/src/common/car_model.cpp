@@ -40,6 +40,28 @@ rota::CarModel::toPanTiltSetpointsFromAngles(double pan, double tilt)
 
 //==============================================================================
 
+void rota::CarModel::updateDeadReckoning()
+{
+    if (std::fabs(c) < 0.001) {
+        // assume the car is going ahead
+        x = x + dl * std::cos(theta);
+        y = y + dl * std::sin(theta);
+    } else {
+        double dtheta = dl * c;
+        x = x + (std::sin(theta + dtheta) - std::sin(theta)) / c;
+        y = y - (std::cos(theta + dtheta) - std::cos(theta)) / c;
+
+        // keep angle between [-pi, pi)
+        theta = std::fmod(theta + dtheta + M_PI, 2*M_PI);
+        if (theta < 0.0)
+            theta += 2*M_PI;
+        theta -= M_PI;
+    }
+
+    dl = 0;
+    c = 0;
+}
+
 rota::CarModel::CarModel()
 {
     // the dead reckoning pose always starts at the origin
