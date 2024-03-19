@@ -33,6 +33,8 @@ struct CarModel {
     // steering
     static double toSteeringAngleFromSetpoint(int16_t setpoint);
     static double toCurvatureFromSetpoint(int16_t setpoint);
+    static int16_t toSetpointFromCurvature(double c);
+    static int16_t toSteeringSetpointFromVelocities(double v, double w);
     // pan & tilt
     static std::pair<double, double> toPanTiltAnglesFromSetpoints(int16_t pan, int16_t tilt);
     static std::pair<int16_t, int16_t> toPanTiltSetpointsFromAngles(double pan, double tilt);

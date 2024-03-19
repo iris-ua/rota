@@ -24,6 +24,20 @@ double rota::CarModel::toCurvatureFromSetpoint(int16_t setpoint)
     return std::tan(angle) / kAxisDistanceInMeters;
 }
 
+int16_t rota::CarModel::toSetpointFromCurvature(double c)
+{
+    double wa = std::atan(c * kAxisDistanceInMeters);
+    return (wa - 0.0067) / 0.0033;
+}
+
+int16_t rota::CarModel::toSteeringSetpointFromVelocities(double v, double w)
+{
+    if (std::fabs(v) < 0.1)
+        return toSetpointFromCurvature(w);
+    else
+        return toSetpointFromCurvature(w/v);
+}
+
 std::pair<double, double>
 rota::CarModel::toPanTiltAnglesFromSetpoints(int16_t pan, int16_t tilt)
 {
