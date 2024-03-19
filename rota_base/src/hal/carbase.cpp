@@ -1,5 +1,38 @@
 
+// ROS tf
+#include <tf2_geometry_msgs/tf2_geometry_msgs.h>
+#include <tf2/convert.h>
+// ROS msgs
+#include <nav_msgs/Odometry.h>
+
 #include "rota_base/hal/carbase.h"
+
+void rota::CarBase::publishOdometry()
+{
+    auto stamp = ros::Time::now();
+
+    nav_msgs::Odometry odom_msg;
+    odom_msg.header.stamp = stamp;
+    odom_msg.header.frame_id = "odom";
+    odom_msg.child_frame_id = "base_link";
+    odom_msg.pose.pose.position.x = model.x;
+    odom_msg.pose.pose.position.y = model.y;
+    odom_msg.pose.pose.position.z = 0.0;
+
+    tf2::Quaternion q; q.setRPY(0, 0, model.theta);
+    odom_msg.pose.pose.orientation = tf2::toMsg(q);
+
+    geometry_msgs::TransformStamped tf_msg;
+    tf_msg.header = odom_msg.header;
+    tf_msg.child_frame_id = odom_msg.child_frame_id;
+    tf_msg.transform.translation.x = odom_msg.pose.pose.position.x;
+    tf_msg.transform.translation.y = odom_msg.pose.pose.position.y;
+    tf_msg.transform.translation.z = odom_msg.pose.pose.position.z;
+    tf_msg.transform.rotation = odom_msg.pose.pose.orientation;
+
+    odom_pub.publish(odom_msg);
+    tfbr.sendTransform(tf_msg);
+}
 
 bool rota::CarBase::ignition()
 {
@@ -17,7 +50,8 @@ bool rota::CarBase::ignition()
     priority_token = 0;
 
     // 3. Setup ROS publisher/subscribers/services
-    // node = ros::NodeHandle("~");
+    node = ros::NodeHandle("~");
+    odom_pub = node.advertise<nav_msgs::Odometry>("odometry", 10);
 
     return true;
 }
@@ -80,9 +114,20 @@ void rota::CarBase::handleFeedbackMessage(const CanMessage& msg)
             int16_t setpoint = (int16_t)(msg.data[1] << 8 | msg.data[0]);
             double steer_ang = CarModel::toSteeringAngleFromSetpoint(setpoint);
             model.c = CarModel::toCurvatureFromSetpoint(setpoint);
+
+            // a curvature higher than 1.1 is an error
+            // we can silently ignore the error, hoping that the next
+            // values are correct.
+            if (std::fabs(model.c) > 1.1) {
+                ROS_WARN("CarBase: invalid curvature: %f", model.c);
+                break;
+            }
+
+            // NOTE: updating the dead reckoning will
+            // set model.dl and model.c to zero (0).
             model.updateDeadReckoning();
 
-            // TODO publish
+            publishOdometry();
             break;
         }// end case
 

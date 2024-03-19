@@ -6,6 +6,7 @@
 #include <mutex>
 
 #include <ros/ros.h>
+#include <tf2_ros/transform_broadcaster.h>
 
 #include "rota_base/common/car_model.h"
 #include "rota_base/hal/can.h"
@@ -36,6 +37,11 @@ struct CarBase {
 
     // ROS stuff
     ros::NodeHandle node;
+    ros::Publisher odom_pub;
+
+    tf2_ros::TransformBroadcaster tfbr;
+
+    void publishOdometry();
 
     // This is the initialization function.
     // It will open the CAN port and setup the necessary ROS pubs/subs.
