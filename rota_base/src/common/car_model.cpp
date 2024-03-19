@@ -14,7 +14,8 @@ int16_t rota::CarModel::toPulsesFromMotorVelocity(double vl)
 double rota::CarModel::toSteeringAngleFromSetpoint(int16_t setpoint)
 {
     // linear conversion between set point and steer angle.
-    return 0.0033 * setpoint - 0.0067;
+    const double invM = (300.0 * M_PI / 180.0) / 1023.0;
+    return setpoint * invM;
 }
 
 double rota::CarModel::toCurvatureFromSetpoint(int16_t setpoint)
@@ -27,7 +28,8 @@ double rota::CarModel::toCurvatureFromSetpoint(int16_t setpoint)
 int16_t rota::CarModel::toSetpointFromCurvature(double c)
 {
     double wa = std::atan(c * kAxisDistanceInMeters);
-    return (wa - 0.0067) / 0.0033;
+    const double M = 1023.0 / (300 * M_PI / 180.0);
+    return wa * M;
 }
 
 int16_t rota::CarModel::toSteeringSetpointFromVelocities(double v, double w)
