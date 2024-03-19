@@ -48,6 +48,7 @@ bool rota::CarBase::ignition()
     pntlt_msg = {CANID_PAN_TILT, 6, {0,0,0,0,0,0,0,0}, true};
 
     priority_token = 0;
+    valid_token = kTxRate; // the initial zero commands are valid.
 
     // 3. Setup ROS publisher/subscribers/services
     node = ros::NodeHandle("~");
@@ -75,14 +76,23 @@ void rota::CarBase::drive()
 
         msg_mutex.lock();
 
+        if (valid_token) {
+            valid_token -= 1;
+            if (not valid_token){
+                // force the velocity to zero
+                motor_msg.data[0] = 0;
+                motor_msg.data[1] = 0;
+            }// end if
+        }// end if
+
         // Send the recurring messages to the base.
-        // The messages are only valid for one write.
         //
         // The order of write matters.
-        // The goal is to receive the encoders and the steer feedback in this very same order.
-        can.writeAndInvalidateMsg(motor_msg);
-        can.writeAndInvalidateMsg(steer_msg);
-        can.writeAndInvalidateMsg(pntlt_msg);
+        // The goal is to receive the encoders and the
+        // steer feedback in this very same order.
+        can.write(motor_msg);
+        can.write(steer_msg);
+        can.write(pntlt_msg);
 
         // Decrease the priority_token so the commands sent by an agent
         // can eventually be used when there is no teleoperation.

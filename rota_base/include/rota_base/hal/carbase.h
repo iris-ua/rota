@@ -31,6 +31,12 @@ struct CarBase {
     // fixed valued. The priority token is decreased at the end of the send
     // commands loop.
     int priority_token;
+
+    // The motor messages have a finite valid time. If the last valid motor
+    // message is too old, then the motor velocity must be set to zero.
+    // How this token work is similar to the @priority_token.
+    int valid_token;
+
     // The write/read of the messages are async, therefore,
     // we need to ensure proper concurrency.
     std::mutex msg_mutex;
