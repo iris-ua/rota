@@ -18,7 +18,8 @@ struct CarModel {
     static constexpr double kEncoderMultFactor = 4;
     static constexpr double kEncoderSampleTime = 5;
 
-    static constexpr double kDistancePerTick = -M_PI * (kPinionTeeth / kRackGearTeeth) /
+    static constexpr double kDistancePerTick = -M_PI * kWheelDiameter *
+        (kPinionTeeth / kRackGearTeeth) /
         (kGearRelation * kEncoderResolution * kEncoderMultFactor);
     static constexpr double kVelocityPerTick = kDistancePerTick / kEncoderSampleTime;
 
