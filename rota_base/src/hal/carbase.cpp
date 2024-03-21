@@ -123,13 +123,13 @@ void rota::CarBase::handleFeedbackMessage(const CanMessage& msg)
         case CANID_RD_STEERING: {
             int16_t setpoint = (int16_t)(msg.data[1] << 8 | msg.data[0]);
             double steer_ang = CarModel::toSteeringAngleFromSetpoint(setpoint);
-            model.c = CarModel::toCurvatureFromSetpoint(setpoint);
+            model.curv = CarModel::toCurvatureFromSetpoint(setpoint);
 
-            // a curvature higher than 1.1 is an error
+            // a curvature higher than 2.0 is an error
             // we can silently ignore the error, hoping that the next
             // values are correct.
-            if (std::fabs(model.c) > 1.1) {
-                ROS_WARN("CarBase: invalid curvature: %f", model.c);
+            if (std::fabs(model.curv) > 2.0) {
+                ROS_WARN("CarBase: invalid curvature: %f", model.curv);
                 break;
             }
 

@@ -26,6 +26,17 @@ struct CarModel {
     static constexpr double kAxisDistance = 400;
     static constexpr double kAxisDistanceInMeters = kAxisDistance / 1000.0;
 
+    static constexpr double kSteeringA = 3;
+    static constexpr double kSteeringB = 38;
+    static constexpr double kSteeringC = std::sqrt(kSteeringA*kSteeringA + kSteeringB*kSteeringB);
+    static constexpr double kSteeringD = 50;
+    static constexpr double kSteeringE = 29.5;
+    static constexpr double kSteeringAlphaPrime = M_PI*0.5 - std::acos(kSteeringB / kSteeringC);
+
+    static constexpr double kSteeringBmE = kSteeringB - kSteeringE;
+    static constexpr double kSteeringDmA = kSteeringD - kSteeringA;
+    static constexpr double kSteeringRiser = std::sqrt(kSteeringBmE*kSteeringBmE + kSteeringDmA*kSteeringDmA);
+
     // encoding/decoding of data sent to, and received from the hardware gateway.
     // driving wheel
     static double toDistanceFromPulses(int16_t npulses);
@@ -42,7 +53,7 @@ struct CarModel {
     CarModel();
 
     // delta motion in terms of delta length (or delta distance) and curvature
-    double dl, c;
+    double dl, curv;
     // dead reckoning pose
     double x, y, theta;
 
